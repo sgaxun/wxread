@@ -1,0 +1,23 @@
+name: keepalive
+
+# 目的：让仓库保持“活跃”，避免 GitHub 因 60 天无提交自动停用定时工作流
+on:
+  schedule:
+    # 每月 1 日 04:00 UTC（北京时间 12:00）
+    - cron: '0 4 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push empty commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keepalive $(date -u +%Y-%m-%d)"
+          git push
